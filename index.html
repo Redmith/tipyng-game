@@ -16,36 +16,49 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 10px;
-            font-size: 16px; /* Previene zoom en iOS */
+            padding: 8px;
+            font-size: 16px;
+            overflow-x: hidden;
         }
 
         .container {
             background: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 20px;
+            padding: 15px;
             max-width: 100%;
             width: 100%;
             margin: 0 auto;
+            position: relative;
         }
 
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 20px;
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 15px;
+            font-size: clamp(1.2rem, 5vw, 2rem);
             background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
+        .instruction {
+            text-align: center;
+            color: #666;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            margin-bottom: 15px;
+            padding: 8px;
+            background: #e8f4fd;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         @media (min-width: 480px) {
@@ -57,67 +70,69 @@
         .stat-card {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
-            padding: 15px 10px;
-            border-radius: 12px;
+            padding: 12px 8px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         .stat-value {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-size: clamp(1rem, 4vw, 1.5rem);
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .stat-label {
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            font-size: clamp(0.6rem, 2.5vw, 0.8rem);
             opacity: 0.9;
         }
 
         .text-display {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            line-height: 1.6;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            line-height: 1.4;
             border: 2px solid #e9ecef;
-            min-height: 100px;
-            max-height: 150px;
+            min-height: 80px;
+            max-height: 120px;
             overflow: hidden;
             position: relative;
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
+            gap: 6px;
         }
 
         .word {
-            margin-right: 8px;
-            margin-bottom: 5px;
             position: relative;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
             transition: all 0.2s ease;
             white-space: nowrap;
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
+            display: inline-block;
         }
 
         .word.correct {
             background-color: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .word.incorrect {
             background-color: #f8d7da;
             color: #721c24;
+            border: 1px solid #f1b0b7;
         }
 
         .word.current {
-            background-color: #d1ecf1;
-            border: 2px solid #17a2b8;
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-            color: #0c5460;
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
+            color: #856404;
             font-weight: bold;
         }
 
@@ -136,23 +151,25 @@
         .word.upcoming {
             background-color: transparent;
             color: #6c757d;
+            border: 1px solid transparent;
         }
 
-        .input-area {
-            margin-bottom: 20px;
+        .input-container {
+            margin-bottom: 15px;
             position: relative;
         }
 
         #textInput {
             width: 100%;
             padding: 15px;
-            font-size: 16px; /* Previene zoom en iOS */
-            border: 2px solid #dee2e6;
-            border-radius: 12px;
+            font-size: 16px;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
             outline: none;
             transition: all 0.3s ease;
             -webkit-appearance: none;
             background-color: white;
+            font-family: inherit;
         }
 
         #textInput:focus {
@@ -160,31 +177,45 @@
             box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
         }
 
+        .input-hint {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #17a2b8;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            pointer-events: none;
+        }
+
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             flex-wrap: wrap;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .toggle-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255,255,255,0.9);
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            border: 1px solid #dee2e6;
         }
 
         .toggle {
             position: relative;
-            width: 40px;
-            height: 20px;
+            width: 36px;
+            height: 18px;
             background: #ccc;
-            border-radius: 20px;
+            border-radius: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -195,8 +226,8 @@
 
         .toggle-slider {
             position: absolute;
-            top: 2px;
-            left: 2px;
+            top: 1px;
+            left: 1px;
             width: 16px;
             height: 16px;
             background: white;
@@ -206,20 +237,21 @@
         }
 
         .toggle.active .toggle-slider {
-            transform: translateX(20px);
+            transform: translateX(18px);
         }
 
         .btn {
-            padding: 12px 20px;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            padding: 12px 18px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
             border: none;
-            border-radius: 20px;
+            border-radius: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            min-height: 44px; /* Mínimo recomendado para touch */
+            min-height: 44px;
+            min-width: 100px;
             touch-action: manipulation;
         }
 
@@ -234,8 +266,8 @@
         }
 
         .btn:hover, .btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
 
         .btn:disabled {
@@ -245,13 +277,13 @@
         }
 
         .results {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
             display: none;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
         }
 
         .results.show {
@@ -266,10 +298,10 @@
 
         .progress-bar {
             width: 100%;
-            height: 6px;
+            height: 5px;
             background: #e9ecef;
             border-radius: 3px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             overflow: hidden;
         }
 
@@ -280,30 +312,55 @@
             transition: width 0.3s ease;
         }
 
-        /* Mejoras para teclado virtual */
-        .input-focused {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        /* Evitar zoom en inputs en iOS */
-        @media screen and (-webkit-min-device-pixel-ratio: 0) {
-            select, textarea, input[type="text"] {
+        /* Optimizaciones específicas para Android */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .text-display {
+                min-height: 70px;
+                max-height: 100px;
+                padding: 10px;
+            }
+            
+            .word {
+                font-size: 0.85rem;
+                padding: 3px 6px;
+            }
+            
+            #textInput {
+                padding: 12px;
                 font-size: 16px;
             }
+        }
+
+        /* Evitar zoom en inputs */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            select, textarea, input[type="text"] {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Mejoras para teclado virtual Android */
+        .keyboard-active {
+            padding-bottom: 300px;
+        }
+
+        .input-focused #textInput {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
     <div class="container" id="gameContainer">
         <h1>🚀 Velocidad de Escritura</h1>
+        
+        <div class="instruction">
+            📝 Escribe la palabra y presiona <strong>ENTER</strong> para continuar
+        </div>
         
         <div class="stats">
             <div class="stat-card">
@@ -330,8 +387,9 @@
 
         <div class="text-display" id="textDisplay"></div>
 
-        <div class="input-area">
+        <div class="input-container">
             <input type="text" id="textInput" placeholder="Toca 'Preparar' para comenzar..." disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <div class="input-hint">ENTER</div>
         </div>
 
         <div class="controls">
@@ -352,7 +410,7 @@
     </div>
 
     <script>
-        class MobileTypingGame {
+        class AndroidTypingGame {
             constructor() {
                 this.words = [
                     'casa', 'perro', 'gato', 'agua', 'fuego', 'tierra', 'cielo', 'amor', 'vida', 'tiempo',
@@ -374,34 +432,52 @@
                 this.totalWords = 0;
                 this.errors = 0;
                 this.noAccents = false;
-                this.isMobile = this.detectMobile();
+                this.isAndroid = this.detectAndroid();
 
                 this.initElements();
                 this.initEventListeners();
                 this.generateText();
-                this.setupMobileOptimizations();
+                this.setupAndroidOptimizations();
             }
 
-            detectMobile() {
-                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            detectAndroid() {
+                return /Android/i.test(navigator.userAgent);
             }
 
-            setupMobileOptimizations() {
-                if (this.isMobile) {
-                    // Prevenir zoom en focus
+            setupAndroidOptimizations() {
+                if (this.isAndroid) {
+                    // Manejar teclado virtual
                     this.textInput.addEventListener('focus', () => {
+                        document.body.classList.add('keyboard-active');
+                        this.container.classList.add('input-focused');
                         setTimeout(() => {
-                            window.scrollTo(0, 0);
+                            this.textInput.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
                         }, 300);
                     });
 
-                    // Manejar orientación
-                    window.addEventListener('orientationchange', () => {
-                        setTimeout(() => {
-                            this.displayText();
-                        }, 500);
+                    this.textInput.addEventListener('blur', () => {
+                        document.body.classList.remove('keyboard-active');
+                        this.container.classList.remove('input-focused');
+                    });
+
+                    // Prevenir pérdida de foco durante el juego
+                    document.addEventListener('click', (e) => {
+                        if (this.isPlaying && e.target !== this.textInput) {
+                            e.preventDefault();
+                            this.textInput.focus();
+                        }
                     });
                 }
+
+                // Manejar orientación
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        this.displayText();
+                    }, 500);
+                });
             }
 
             initElements() {
@@ -425,19 +501,20 @@
                 this.noAccentsToggle.addEventListener('click', () => this.toggleAccents());
                 this.textInput.addEventListener('input', (e) => this.handleInput(e));
                 
-                // Mejor manejo del espacio en móvil
-                this.textInput.addEventListener('keyup', (e) => {
-                    if (e.key === ' ' || e.keyCode === 32) {
-                        this.handleSpace();
+                // CAMBIO PRINCIPAL: Usar Enter en lugar de espacio
+                this.textInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        e.preventDefault();
+                        this.handleEnter();
                     }
                 });
 
-                // Manejo de blur/focus mejorado para móvil
+                // Mantener foco en el input durante el juego
                 this.textInput.addEventListener('blur', () => {
                     if (this.isPlaying) {
                         setTimeout(() => {
                             this.textInput.focus();
-                        }, 100);
+                        }, 50);
                     }
                 });
             }
@@ -454,12 +531,11 @@
             displayText() {
                 this.textDisplay.innerHTML = '';
                 
-                // Mostrar menos palabras en móvil
-                const wordsToShow = this.isMobile ? 
-                    Math.min(8, this.currentText.length - this.currentIndex) :
-                    Math.min(12, this.currentText.length - this.currentIndex);
+                // Mostrar palabras optimizado para Android
+                const wordsToShow = window.innerWidth < 480 ? 6 : 10;
+                const actualWordsToShow = Math.min(wordsToShow, this.currentText.length - this.currentIndex);
                 
-                for (let i = 0; i < wordsToShow; i++) {
+                for (let i = 0; i < actualWordsToShow; i++) {
                     const word = this.currentText[this.currentIndex + i];
                     const span = document.createElement('span');
                     const displayWord = this.noAccents ? this.removeAccents(word) : word;
@@ -492,7 +568,7 @@
                 this.gameReady = true;
                 this.textInput.disabled = false;
                 this.textInput.focus();
-                this.textInput.placeholder = 'Escribe para empezar...';
+                this.textInput.placeholder = 'Escribe la palabra y presiona ENTER...';
                 this.startBtn.disabled = true;
                 this.startBtn.textContent = 'Listo';
                 this.results.classList.remove('show');
@@ -538,8 +614,8 @@
                         this.textInput.style.backgroundColor = '#d4edda';
                         this.textInput.style.borderColor = '#28a745';
                     } else if (targetWord.startsWith(inputValue) && inputValue.length > 0) {
-                        this.textInput.style.backgroundColor = '#d1ecf1';
-                        this.textInput.style.borderColor = '#17a2b8';
+                        this.textInput.style.backgroundColor = '#fff3cd';
+                        this.textInput.style.borderColor = '#ffc107';
                     } else if (inputValue.length > 0) {
                         currentWordElement.classList.add('typing-incorrect');
                         this.textInput.style.backgroundColor = '#f8d7da';
@@ -551,10 +627,13 @@
                 }
             }
 
-            handleSpace() {
+            // MÉTODO PRINCIPAL CAMBIADO: handleEnter en lugar de handleSpace
+            handleEnter() {
                 if (!this.isPlaying) return;
 
                 const inputValue = this.textInput.value.trim();
+                if (inputValue === '') return; // No procesar si está vacío
+
                 const currentWord = this.currentText[this.currentIndex];
                 const targetWord = this.noAccents ? this.removeAccents(currentWord) : currentWord;
 
@@ -562,7 +641,7 @@
                 
                 this.totalWords++;
                 
-                if (inputValue === targetWord) {
+                if (inputValue.toLowerCase() === targetWord.toLowerCase()) {
                     this.correctWords++;
                     if (currentWordElement) {
                         currentWordElement.classList.remove('current', 'typing-correct', 'typing-incorrect');
@@ -576,12 +655,14 @@
                     }
                 }
 
+                // Limpiar input y estilos
                 this.textInput.value = '';
                 this.textInput.style.backgroundColor = '';
                 this.textInput.style.borderColor = '#667eea';
                 
                 this.currentIndex++;
                 
+                // Generar más palabras si es necesario
                 if (this.currentIndex >= this.currentText.length - 5) {
                     for (let i = 0; i < 15; i++) {
                         const randomWord = this.words[Math.floor(Math.random() * this.words.length)];
@@ -668,10 +749,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            new MobileTypingGame();
+            new AndroidTypingGame();
         });
 
-        // Prevenir zoom en iOS
+        // Prevenir comportamientos no deseados en Android
         document.addEventListener('touchstart', function(event) {
             if (event.touches.length > 1) {
                 event.preventDefault();
@@ -687,6 +768,13 @@
             }
             lastTouchEnd = now;
         }, false);
+
+        // Prevenir scroll no deseado
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
