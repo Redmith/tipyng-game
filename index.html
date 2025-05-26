@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Velocidad de Escritura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 16px; /* Previene zoom en iOS */
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 480px) {
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 10px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            opacity: 0.9;
+        }
+
+        .text-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            line-height: 1.6;
+            border: 2px solid #e9ecef;
+            min-height: 100px;
+            max-height: 150px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .word {
+            margin-right: 8px;
+            margin-bottom: 5px;
+            position: relative;
+            padding: 3px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .word.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .word.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .word.current {
+            background-color: #d1ecf1;
+            border: 2px solid #17a2b8;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+            color: #0c5460;
+            font-weight: bold;
+        }
+
+        .word.current.typing-correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .word.current.typing-incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .word.upcoming {
+            background-color: transparent;
+            color: #6c757d;
+        }
+
+        .input-area {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #textInput {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px; /* Previene zoom en iOS */
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            background-color: white;
+        }
+
+        #textInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 44px; /* Mínimo recomendado para touch */
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+
+        .btn:hover, .btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Mejoras para teclado virtual */
+        .input-focused {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Evitar zoom en inputs en iOS */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            select, textarea, input[type="text"] {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="gameContainer">
+        <h1>🚀 Velocidad de Escritura</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="wpm">0</div>
+                <div class="stat-label">PPM</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy">100%</div>
+                <div class="stat-label">Precisión</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="timer">60</div>
+                <div class="stat-label">Segundos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="errors">0</div>
+                <div class="stat-label">Errores</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="text-display" id="textDisplay"></div>
+
+        <div class="input-area">
+            <input type="text" id="textInput" placeholder="Toca 'Preparar' para comenzar..." disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">Preparar</button>
+            <button class="btn btn-secondary" id="resetBtn">Reiniciar</button>
+            <div class="toggle-container">
+                <span>Sin tildes:</span>
+                <div class="toggle" id="noAccentsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h3>🎉 ¡Juego Terminado!</h3>
+            <p id="finalStats"></p>
+        </div>
+    </div>
+
+    <script>
+        class MobileTypingGame {
+            constructor() {
+                this.words = [
+                    'casa', 'perro', 'gato', 'agua', 'fuego', 'tierra', 'cielo', 'amor', 'vida', 'tiempo',
+                    'mundo', 'persona', 'trabajo', 'escuela', 'familia', 'amigo', 'comida', 'música', 'libro', 'coche',
+                    'ciudad', 'país', 'montaña', 'playa', 'bosque', 'río', 'mar', 'sol', 'luna', 'estrella',
+                    'flor', 'árbol', 'pájaro', 'color', 'blanco', 'negro', 'rojo', 'azul', 'verde', 'amarillo',
+                    'grande', 'pequeño', 'alto', 'bajo', 'rápido', 'lento', 'fuerte', 'débil', 'caliente', 'frío',
+                    'nuevo', 'viejo', 'bueno', 'malo', 'feliz', 'triste', 'fácil', 'difícil', 'importante', 'diferente'
+                ];
+                
+                this.currentText = [];
+                this.currentIndex = 0;
+                this.startTime = null;
+                this.timeLeft = 60;
+                this.timer = null;
+                this.isPlaying = false;
+                this.gameReady = false;
+                this.correctWords = 0;
+                this.totalWords = 0;
+                this.errors = 0;
+                this.noAccents = false;
+                this.isMobile = this.detectMobile();
+
+                this.initElements();
+                this.initEventListeners();
+                this.generateText();
+                this.setupMobileOptimizations();
+            }
+
+            detectMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            setupMobileOptimizations() {
+                if (this.isMobile) {
+                    // Prevenir zoom en focus
+                    this.textInput.addEventListener('focus', () => {
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 300);
+                    });
+
+                    // Manejar orientación
+                    window.addEventListener('orientationchange', () => {
+                        setTimeout(() => {
+                            this.displayText();
+                        }, 500);
+                    });
+                }
+            }
+
+            initElements() {
+                this.textDisplay = document.getElementById('textDisplay');
+                this.textInput = document.getElementById('textInput');
+                this.startBtn = document.getElementById('startBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.noAccentsToggle = document.getElementById('noAccentsToggle');
+                this.wpmDisplay = document.getElementById('wpm');
+                this.accuracyDisplay = document.getElementById('accuracy');
+                this.timerDisplay = document.getElementById('timer');
+                this.errorsDisplay = document.getElementById('errors');
+                this.results = document.getElementById('results');
+                this.progress = document.getElementById('progress');
+                this.container = document.getElementById('gameContainer');
+            }
+
+            initEventListeners() {
+                this.startBtn.addEventListener('click', () => this.prepareGame());
+                this.resetBtn.addEventListener('click', () => this.resetGame());
+                this.noAccentsToggle.addEventListener('click', () => this.toggleAccents());
+                this.textInput.addEventListener('input', (e) => this.handleInput(e));
+                
+                // Mejor manejo del espacio en móvil
+                this.textInput.addEventListener('keyup', (e) => {
+                    if (e.key === ' ' || e.keyCode === 32) {
+                        this.handleSpace();
+                    }
+                });
+
+                // Manejo de blur/focus mejorado para móvil
+                this.textInput.addEventListener('blur', () => {
+                    if (this.isPlaying) {
+                        setTimeout(() => {
+                            this.textInput.focus();
+                        }, 100);
+                    }
+                });
+            }
+
+            generateText() {
+                this.currentText = [];
+                for (let i = 0; i < 30; i++) {
+                    const randomWord = this.words[Math.floor(Math.random() * this.words.length)];
+                    this.currentText.push(randomWord);
+                }
+                this.displayText();
+            }
+
+            displayText() {
+                this.textDisplay.innerHTML = '';
+                
+                // Mostrar menos palabras en móvil
+                const wordsToShow = this.isMobile ? 
+                    Math.min(8, this.currentText.length - this.currentIndex) :
+                    Math.min(12, this.currentText.length - this.currentIndex);
+                
+                for (let i = 0; i < wordsToShow; i++) {
+                    const word = this.currentText[this.currentIndex + i];
+                    const span = document.createElement('span');
+                    const displayWord = this.noAccents ? this.removeAccents(word) : word;
+                    span.textContent = displayWord;
+                    span.className = 'word';
+                    
+                    if (i === 0) {
+                        span.className += ' current';
+                    } else {
+                        span.className += ' upcoming';
+                    }
+                    
+                    this.textDisplay.appendChild(span);
+                }
+            }
+
+            removeAccents(text) {
+                return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
+
+            toggleAccents() {
+                this.noAccents = !this.noAccents;
+                this.noAccentsToggle.classList.toggle('active');
+                if (!this.isPlaying) {
+                    this.displayText();
+                }
+            }
+
+            prepareGame() {
+                this.gameReady = true;
+                this.textInput.disabled = false;
+                this.textInput.focus();
+                this.textInput.placeholder = 'Escribe para empezar...';
+                this.startBtn.disabled = true;
+                this.startBtn.textContent = 'Listo';
+                this.results.classList.remove('show');
+            }
+
+            startGame() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                this.startTime = Date.now();
+                this.startBtn.textContent = 'Jugando...';
+                
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    this.timerDisplay.textContent = this.timeLeft;
+                    this.updateProgress();
+                    
+                    if (this.timeLeft <= 0) {
+                        this.endGame();
+                    }
+                }, 1000);
+            }
+
+            handleInput(e) {
+                if (!this.gameReady) return;
+                
+                if (!this.isPlaying && e.target.value.length === 1) {
+                    this.startGame();
+                }
+                
+                if (!this.isPlaying) return;
+
+                const inputValue = e.target.value.trim();
+                const currentWord = this.currentText[this.currentIndex];
+                const targetWord = this.noAccents ? this.removeAccents(currentWord) : currentWord;
+                
+                const currentWordElement = this.textDisplay.querySelector('.word.current');
+                if (currentWordElement) {
+                    currentWordElement.classList.remove('typing-correct', 'typing-incorrect');
+                    
+                    if (inputValue === targetWord) {
+                        currentWordElement.classList.add('typing-correct');
+                        this.textInput.style.backgroundColor = '#d4edda';
+                        this.textInput.style.borderColor = '#28a745';
+                    } else if (targetWord.startsWith(inputValue) && inputValue.length > 0) {
+                        this.textInput.style.backgroundColor = '#d1ecf1';
+                        this.textInput.style.borderColor = '#17a2b8';
+                    } else if (inputValue.length > 0) {
+                        currentWordElement.classList.add('typing-incorrect');
+                        this.textInput.style.backgroundColor = '#f8d7da';
+                        this.textInput.style.borderColor = '#dc3545';
+                    } else {
+                        this.textInput.style.backgroundColor = '';
+                        this.textInput.style.borderColor = '#667eea';
+                    }
+                }
+            }
+
+            handleSpace() {
+                if (!this.isPlaying) return;
+
+                const inputValue = this.textInput.value.trim();
+                const currentWord = this.currentText[this.currentIndex];
+                const targetWord = this.noAccents ? this.removeAccents(currentWord) : currentWord;
+
+                const currentWordElement = this.textDisplay.querySelector('.word.current');
+                
+                this.totalWords++;
+                
+                if (inputValue === targetWord) {
+                    this.correctWords++;
+                    if (currentWordElement) {
+                        currentWordElement.classList.remove('current', 'typing-correct', 'typing-incorrect');
+                        currentWordElement.classList.add('correct');
+                    }
+                } else {
+                    this.errors++;
+                    if (currentWordElement) {
+                        currentWordElement.classList.remove('current', 'typing-correct', 'typing-incorrect');
+                        currentWordElement.classList.add('incorrect');
+                    }
+                }
+
+                this.textInput.value = '';
+                this.textInput.style.backgroundColor = '';
+                this.textInput.style.borderColor = '#667eea';
+                
+                this.currentIndex++;
+                
+                if (this.currentIndex >= this.currentText.length - 5) {
+                    for (let i = 0; i < 15; i++) {
+                        const randomWord = this.words[Math.floor(Math.random() * this.words.length)];
+                        this.currentText.push(randomWord);
+                    }
+                }
+                
+                this.displayText();
+                this.updateStats();
+            }
+
+            updateStats() {
+                if (!this.startTime) return;
+                
+                const timeElapsed = (Date.now() - this.startTime) / 1000 / 60;
+                const wpm = timeElapsed > 0 ? Math.round(this.correctWords / timeElapsed) : 0;
+                const accuracy = this.totalWords > 0 ? Math.round((this.correctWords / this.totalWords) * 100) : 100;
+
+                this.wpmDisplay.textContent = Math.max(0, wpm);
+                this.accuracyDisplay.textContent = Math.max(0, Math.min(100, accuracy)) + '%';
+                this.errorsDisplay.textContent = this.errors;
+            }
+
+            updateProgress() {
+                const progressPercent = ((60 - this.timeLeft) / 60) * 100;
+                this.progress.style.width = progressPercent + '%';
+            }
+
+            endGame() {
+                this.isPlaying = false;
+                clearInterval(this.timer);
+                this.textInput.disabled = true;
+                this.startBtn.disabled = false;
+                this.startBtn.textContent = 'Preparar';
+                
+                const finalWPM = this.wpmDisplay.textContent;
+                const finalAccuracy = this.accuracyDisplay.textContent;
+                
+                this.results.querySelector('#finalStats').innerHTML = `
+                    <strong>Velocidad:</strong> ${finalWPM} PPM<br>
+                    <strong>Precisión:</strong> ${finalAccuracy}<br>
+                    <strong>Errores:</strong> ${this.errors}<br>
+                    <strong>Palabras correctas:</strong> ${this.correctWords}/${this.totalWords}<br>
+                    ${this.getPerformanceMessage(parseInt(finalWPM))}
+                `;
+                
+                this.results.classList.add('show');
+            }
+
+            getPerformanceMessage(wpm) {
+                if (wpm >= 50) return '<br>🏆 ¡Excelente! Eres muy rápido.';
+                if (wpm >= 35) return '<br>👍 ¡Muy bien! Buen ritmo.';
+                if (wpm >= 20) return '<br>👌 Bien, sigue practicando.';
+                return '<br>💪 ¡Sigue practicando para mejorar!';
+            }
+
+            resetGame() {
+                this.isPlaying = false;
+                this.gameReady = false;
+                clearInterval(this.timer);
+                this.currentIndex = 0;
+                this.timeLeft = 60;
+                this.correctWords = 0;
+                this.totalWords = 0;
+                this.errors = 0;
+                
+                this.textInput.value = '';
+                this.textInput.disabled = true;
+                this.textInput.style.backgroundColor = '';
+                this.textInput.style.borderColor = '';
+                this.textInput.placeholder = 'Toca "Preparar" para comenzar...';
+                this.startBtn.disabled = false;
+                this.startBtn.textContent = 'Preparar';
+                
+                this.timerDisplay.textContent = '60';
+                this.wpmDisplay.textContent = '0';
+                this.accuracyDisplay.textContent = '100%';
+                this.errorsDisplay.textContent = '0';
+                this.progress.style.width = '0%';
+                
+                this.results.classList.remove('show');
+                this.generateText();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileTypingGame();
+        });
+
+        // Prevenir zoom en iOS
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+
+        // Prevenir zoom con doble tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
