@@ -344,13 +344,34 @@
 
         /* Mejoras para teclado virtual Android */
         .keyboard-active {
-            padding-bottom: 300px;
+            padding-bottom: 50px;
         }
 
-        .input-focused #textInput {
-            position: sticky;
-            top: 10px;
-            z-index: 100;
+        .keyboard-active .text-display {
+            position: fixed;
+            bottom: 280px;
+            left: 8px;
+            right: 8px;
+            z-index: 200;
+            background: white;
+            border: 3px solid #667eea;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+            margin: 0;
+            max-height: 80px;
+            min-height: 60px;
+        }
+
+        .keyboard-active .input-container {
+            position: fixed;
+            bottom: 220px;
+            left: 8px;
+            right: 8px;
+            z-index: 200;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 -3px 15px rgba(0,0,0,0.2);
+            margin: 0;
         }
     </style>
 </head>
@@ -385,12 +406,12 @@
             <div class="progress" id="progress"></div>
         </div>
 
-        <div class="text-display" id="textDisplay"></div>
-
         <div class="input-container">
             <input type="text" id="textInput" placeholder="Toca 'Preparar' para comenzar..." disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <div class="input-hint">ENTER</div>
         </div>
+
+        <div class="text-display" id="textDisplay"></div>
 
         <div class="controls">
             <button class="btn btn-primary" id="startBtn">Preparar</button>
